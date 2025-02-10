@@ -6,7 +6,7 @@ from sqlmodel import select
 
 from dependencies import DBSession, get_current_user, get_session_id
 from utils import create_session, delete_session
-from models import CPUUsageCreate, TestRun, TestRunCreate, User, UserLogin, CPUUsage
+from models import CPUUsageCreate, TestRun, User, UserLogin, CPUUsage
 from config import settings
 
 
@@ -43,15 +43,13 @@ async def logout(session_id: str = Depends(get_session_id)):
 
 
 @api_router.post(
-    "/test_runs",
+    "/test_runs/",
     dependencies=[Depends(get_current_user)],
     response_model=TestRun,
     status_code=status.HTTP_201_CREATED,
 )
-async def create_test_run(
-    db_session: DBSession, test_run_in: TestRunCreate
-):
-    test_run = TestRun.model_validate(test_run_in)
+async def create_test_run(db_session: DBSession):
+    test_run = TestRun()
     db_session.add(test_run)
     db_session.commit()
     db_session.refresh(test_run)

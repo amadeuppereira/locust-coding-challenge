@@ -16,12 +16,8 @@ def create_users():
 
 def create_tests():
     with get_session() as session:
-        test_1 = TestRun(
-            id=uuid.UUID("7acf59e4db164cd3b04a13b6e4f1f5ca"), name="Test 1"
-        )
-        test_2 = TestRun(
-            id=uuid.UUID("16f1e55b34c74034b57ab10559d16872"), name="Test 2"
-        )
+        test_1 = TestRun(id=uuid.UUID("7acf59e4db164cd3b04a13b6e4f1f5ca"))
+        test_2 = TestRun(id=uuid.UUID("16f1e55b34c74034b57ab10559d16872"))
         session.add(test_1)
         session.add(test_2)
         session.commit()

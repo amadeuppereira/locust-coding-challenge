@@ -19,15 +19,7 @@ class User(BaseUser, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
 
 
-class BaseTestRun(SQLModel):
-    name: str
-
-
-class TestRunCreate(BaseTestRun):
-    pass
-
-
-class TestRun(BaseTestRun, table=True):
+class TestRun(SQLModel, table=True):
     __tablename__ = "test_run"
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)

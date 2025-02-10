@@ -15,28 +15,55 @@
 
 **Part 2**
 
-- [ ] Create an installable Python script that measures the current CPU usage (using for
+- [x] Create an installable Python script that measures the current CPU usage (using for
 example psutil) and writes it to the database, via the API, at regular configurable
 intervals. The CPU usage should be measured until the user manually stops the script.
 Measurements should be grouped into test runs, such that each run of the script is a
 new testrun.
-- [ ] The script should print the current cpu usage every 5 seconds.
-- [ ] The script should notify the user if the cpu usage exceeds a certain configurable
+- [x] The script should print the current cpu usage every 5 seconds.
+- [x] The script should notify the user if the cpu usage exceeds a certain configurable
 threshold.
-- [ ] A report should be shown at the end of the testrun:
-    - [ ] The total time of the test
-    - [ ] The approximate total time cpu usage was above threshold
+- [x] A report should be shown at the end of the testrun:
+    - [x] The total time of the test
+    - [x] The approximate total time cpu usage was above threshold
 
 **Part 3 (optional)**
 
 - [x] Use Docker to package the API
 
+---
 
 **Start API (with mysql db)**
 
 `docker compose up`
 
-**Populate with dummy data:**
+```
+- login
+POST /api/auth/login
+{
+    "username": str
+    "password": str
+}
+
+- logout
+POST /api/auth/logout
+
+- create a new test run
+POST /api/test_runs
+
+- write cpu usage to a test run
+POST /api/test_runs/{test_run_id}/cpu_usage
+{
+    "percentage": float
+}
+
+- get cpu usage from a test run
+GET /api/test_runs/{test_run_id}/cpu_usage
+```
+
+---
+
+**Populate db with dummy data:**
 
 `docker compose exec api python3 dummy_data.py`
 
@@ -46,15 +73,48 @@ Users:
     - user2 / password2
 
 Test Runs:
-    - 7acf59e4db164cd3b04a13b6e4f1f5ca (Test 1)
-    - 16f1e55b34c74034b57ab10559d16872 (Test 2)
+    - 7acf59e4db164cd3b04a13b6e4f1f5ca
+    - 16f1e55b34c74034b57ab10559d16872
 ```
 
+---
+
+**CPU usage monitor**
+
+- Install
+
+`pip install cpu_usage_monitor`
+
+- Run
+
+`cpu-usage-monitor`
+
+```
+usage: cpu-usage-monitor [-h] [-i INTERVAL] [-t THRESHOLD]
+
+Monitor CPU usage.
+
+options:
+  -h, --help            show this help message and exit
+  -i, --interval INTERVAL
+                        Sampling interval in seconds (default: 1s)
+  -t, --threshold THRESHOLD
+                        CPU usage percentage threshold (default: 10)
+```
+---
+
+
 **Notes:**
+
 - Separate models, routers per functionality (auth, test runs, ...)
 - Use model mixins (p.e: TimestampMixin)
 - Use migrations (Alembic) to update database
 - Cascade model deletes (when a test run is deleted should we also delete cpu usage related to it?)
-- Pagination when retrieving all cpu usage
-- This is storing sessions in memory, should use redis, memcached, KV, ...
+- Pagination when retrieving all cpu usages
+- This is storing user sessions in memory, should use redis, memcached, KV, ... in production
 - Do not store passwords in plain text
+
+- API user credential should not be hardcoded in the cpu usage monitor script
+- In cpu usage monitor we should validate API responses (we assume that everything is going to be successful)
+- Add error handling
+- Preetier logs :)
